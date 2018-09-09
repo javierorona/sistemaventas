@@ -1,0 +1,20 @@
+  <header ng-include="'app/modules/navbar/views/header.view.html'" data-ng-controller="Header as vmHeader"></header>
+
+  <div class="content main-container">
+    <div id="sidebar" class="sidebar responsive" ng-class="{'menu-min':!vmMenu.collapseMenu, 'display':vmMenu.displayMenu}" data-ng-controller="Menu as vmMenu" ng-hide="vmMenu.isLoginScreen">
+
+      <coppel-menu menu-data="vmMenu.tree"></coppel-menu>
+      <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse" ng-click="vmMenu.toggleMenu()" >
+          <i class="ace-icon fa" ng-class="{true:'fa-angle-double-right',false: 'fa-angle-double-left'} [!vmMenu.collapseMenu]" data-icon1="fa-angle-double-left" data-icon2="fa-angle-double-right"></i>
+      </div>
+    </div>
+    <div class="main-content">
+      <div class="main-content-inner" >
+        <div ncy-breadcrumb></div>
+        <div ui-view="content" id="content"></div>
+      </div>
+    </div>
+    <a class="btn-scroll-up btn btn-sm btn-inverse" sticky-nav id="btn-scroll-up" href="" du-smooth-scroll="navbar">
+        <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
+      </a>
+  </div>

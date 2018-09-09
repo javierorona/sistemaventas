@@ -1,0 +1,41 @@
+{
+    "name": "na/lavendimia-back",
+    "description": "servicio de sistema de ventas",
+    "type": "library",
+    "license": "propietary",
+    "authors": [
+        {
+            "name": "Javier Orona",
+            "email": "jav.oro.qui@gmail.com"
+        }
+    ],
+    "repositories": [
+        {
+            "packagist": false
+        },
+        {
+            "type": "vcs",
+            "url": "http://gitlab.coppel.com/oc/rac.git"
+        },
+        {
+            "type": "vcs",
+            "url": "http://gitlab.coppel.com/oc/log.git"
+        },
+        {
+            "type": "vcs",
+            "url": "http://gitlab.coppel.com/oc/klogger.git"
+        },
+        {
+            "type": "vcs",
+            "url": "http://gitlab.coppel.com/oc/httpful.git"
+        }
+    ],
+    "require": {
+        "oc/rac": "*",
+        "katzgrau/klogger": "*",
+        "nategood/httpful": "*"
+    },
+    "config": {
+        "secure-http" : false
+    }
+}

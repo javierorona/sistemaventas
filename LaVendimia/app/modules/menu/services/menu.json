@@ -1,0 +1,40 @@
+{
+    "meta":{},
+    "data":{
+  "menu": [
+    {
+      "name": "Inicio",
+      "uri": "/",
+      "state": "",
+      "nodes": [
+        {
+          "name": "Ventas",
+          "uri": "/ventas",
+          "state": "app.ventas",
+          "nodes": []
+        },
+        {
+          "name": "Clientes",
+          "uri": "/clientes",
+          "state": "app.clientes",
+          "nodes": []
+        },
+        {
+          "name": "Artículos",
+          "uri": "/articulos",
+          "state": "app.articulos",
+          "nodes": []
+        },
+        {
+          "name": "Configuración",
+          "uri": "/configuracion",
+          "state": "app.configuracion",
+          "nodes": []
+        }
+      ],
+      "icon": "",
+      "padre": true
+    }
+  ]
+  }
+}

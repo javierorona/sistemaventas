@@ -1,0 +1,84 @@
+<section class="page-content">
+    <div class="col-lg-12 col-md-12 col-xs-12">
+        <div class="panel panel-primary" style="height: 250px;">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <span class="menu-icon" ></span>&nbsp;Configuraci&oacute;n general
+                </h3>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 " align="center">
+                <br>
+                <table border="0" style="width: 40%;">
+                    <tr style="height: 50px;">
+                        <td style="text-align: right">
+                            <label for="text"
+                                style="color: green;">
+                                <strong>Tasa de Financiamiento:&nbsp;</strong> 
+                            </label>    
+                        </td>
+                        <td>
+                            <input
+                                type="text"
+                                id="txtTasaFinanciamiento"
+                                ng-model="vm.tasa"
+                                solo-numeros
+                                maxlength="4">
+                        </td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td style="text-align: right">
+                            <label for="text"
+                                style="color: green;">
+                                <strong>% Enganche:&nbsp;</strong> 
+                            </label> 
+                        </td>
+                        <td>
+                            <input
+                                type="text"
+                                id="txtEnganche"
+                                ng-model="vm.porcentaje"
+                                solo-numeros-sin-punto
+                                maxlength="3">
+                        </td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td style="text-align: right">
+                            <label for="text"
+                                style="color: green;">
+                                <strong>Plazo M&aacute;ximo:&nbsp;</strong> 
+                            </label> 
+                        </td>
+                        <td>
+                            <input
+                                type="text"
+                                id="txtPlazoFinanciamiento"
+                                ng-model="vm.plazo"
+                                solo-numeros-sin-punto
+                                maxlength="2">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" align="right">
+            <table border="0" style="width: 25%;">
+                <tr>
+                    <td style="text-align: right">
+                        <button class="btn btn-success"
+                            ng-click="vm.cancelar()"
+                            style="width: 95%;">
+                            Cancelar
+                        </button>
+                    </td>
+                    <td style="text-align: right">
+                        <button class="btn btn-success"
+                            ng-click="vm.guardar()"
+                            style="width: 95%;">
+                            Guardar
+                        </button>
+                    </td>
+                </tr>
+            </table>            
+        </div>
+</section>

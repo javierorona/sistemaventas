@@ -1,0 +1,339 @@
+<section class="page-content">
+        <div class="row" ng-if="!vm.seccionNuevo">
+            <div class="col-xs-12" align="right">
+                <button class="btn btn-primary"
+                    ng-click="vm.nuevaVenta()">
+                    <span class="action-buttons">
+                        <i class="ui-icon ace-icon fa fa-plus bigger-120 white"></i>
+                        &nbsp;Nueva Venta
+                    </span>
+                    
+                </button>
+            </div>
+            <dir class="space-6"></dir>
+            <div class="col-lg-12 col-md-12 col-xs-12">
+                <div class="panel panel-primary" style="height: 430px;">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <span class="menu-icon fa fa-list" ></span>&nbsp;Ventas Registradas
+                            
+                        </h3>
+                    </div>
+                    <div ui-grid="vm.gridOptions"
+                        class="grid"
+                        ui-grid-resize-columns
+                        ui-grid-auto-resize
+                        ui-grid-pagination
+                        style = " height: 365px; font-size: 11px; font-family: arial">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12 col-md-12 col-xs-12" ng-if="vm.seccionNuevo">
+            <div class="panel panel-primary" >
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <span class="menu-icon" ></span>&nbsp;Registro de Ventas
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" align="left">
+                        <br>
+                        <div class="col-lg-11 col-md-11 col-sm-11 col-xs-11" align="right">
+                            <label
+                                style="color: green;">
+                                <strong>Folio de Venta:&nbsp;{{vm.folioVenta}}</strong>
+                            </label>
+                        </div>
+                        <table border="0" style="width: 60%;">
+                            <tr style="height: 40px;">
+                                <td style="text-align: right; width: 10%;">
+                                    <label for="text"
+                                        style="color: green;">
+                                        <strong>Cliente:&nbsp;</strong> 
+                                    </label>    
+                                </td>
+                                <td>
+                                    <select chosen multiple
+                                        max-selection="1"
+                                        id="cmbClientes"
+                                        class="chosen-select"
+                                        data-placeholder="Seleccione un cliente"                           ng-model="vm.clienteSelecto"
+                                        ng-change="vm.cambiaSelectCliente()"
+                                        ng-options="p.id as p.nombre for p in vm.datosCliente"
+                                        ng-disabled="vm.deshabilCliente">
+                                    </select>                             
+                                </td>
+                                <td style="text-align: right">
+                                    <label disabled ng-if="vm.verRFC">
+                                        <strong> RFC:&nbsp;{{vm.rfcCliente}}</strong> 
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr style="height: 40px;">
+                                <td style="text-align: right">
+                                    <label for="text"
+                                        style="color: green;">
+                                        <strong>Art&iacute;culo:&nbsp;</strong> 
+                                    </label> 
+                                </td>
+                                <td>
+                                    <select chosen multiple
+                                        max-selection="1"
+                                        id="cmbArticulos"
+                                        class="chosen-select"
+                                        data-placeholder="Seleccione un art&iacute;culo"
+                                        ng-model="vm.articuloSelecto"
+                                        ng-change="vm.cambiaSelectArticulo()"
+                                        ng-options="p.id as p.descripcion for p in vm.datosArticulo"
+                                        ng-disabled="vm.deshabilitaArticulo">
+                                    </select>   
+                                </td>
+                                <td align="left">
+                                    <span class="action-buttons pull-left">
+                                        <a ng-click= "vm.agregarArticulo()"  >	
+                                            <i class="glyphicon glyphicon-plus-sign bigger-200" 
+                                            title = "Agregar Art&iacute;culo"></i>
+                                        </a>
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="space-6"></div>
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div ui-grid="vm.gridOptionsVenta"
+                            class="grid"
+                            style = " height: 200px; font-size: 11px; font-family: arial">
+                        </div>
+                    </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" align="right">
+                        <table border="0" style="width: 40%">
+                            <tr style="height: 30px;">
+                                <td style="text-align: right; width: 50%;">
+                                    <label for="text"
+                                        style="color: black; background-color: lightgray">
+                                        <strong>Enganche:&nbsp;</strong> 
+                                    </label>    
+                                </td>
+                                <td style="text-align: right">
+                                    <label for="text"
+                                        style="color:  rgb(59, 56, 230);">
+                                        <strong>{{vm.enganche}}</strong> 
+                                    </label>
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr style="height: 30px;">
+                                <td style="text-align: right; width: 50%;">
+                                    <label for="text"
+                                        style="color: black; background-color: lightgray">
+                                        <strong>Bonificaci&oacute;n enganche:&nbsp;</strong> 
+                                    </label>    
+                                </td>
+                                <td style="text-align: right">
+                                    <label for="text"
+                                        style="color: rgb(59, 56, 230);">
+                                        <strong>{{vm.bonifEnganche}}</strong> 
+                                    </label>
+                                </td>
+                                <td style="width: 20%;"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: right; width: 50%;">
+                                    <label for="text"
+                                        style="color: black; background-color: lightgray">
+                                        <strong>Total:&nbsp;</strong> 
+                                    </label>    
+                                </td>
+                                <td style="text-align: right">
+                                    <label for="text"
+                                        style="color: rgb(59, 56, 230);">
+                                        <strong>{{vm.totalPagar}}</strong> 
+                                    </label>
+                                </td>
+                                <td></td>
+                            </tr>
+                        </table>
+                        <br>
+                    </div>
+                    <!-- termina seccion importe -->
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-if="vm.verTabla">
+                        <table class="table table-responsive" style="width: 100%">
+                            <thead style="text-align: center; background-color: lightslategray;">
+                                <tr style="height: 35px;">
+                                    <td colspan="5">
+                                        <b>ABONOS MENSUALES</b> 
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="row in vm.tablaAbonos">
+                                    <td>{{row.plazo}} ABONOS DE</td>
+                                    <td>$ {{row.abono}}</td>
+                                    <td>TOTAL A PAGAR $ {{row.totalPagar}}</td>
+                                    <td>SE AHORRA $ {{row.ahorra}}</td>
+                                    <td>
+                                        <input type="radio" name="radio" ng-click="vm.validarPlazo($index)">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div> 
+                    <!-- Termina panel -->
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" align="right">
+                <table border="0" style="width: 25%;">
+                    <tr>
+                        <td style="text-align: right">
+                            <button class="btn btn-success"
+                                ng-click="vm.cancelar()"
+                                style="width: 95%;">
+                                Cancelar
+                            </button>
+                        </td>
+                        <td style="text-align: right">
+                            <button class="btn btn-success"
+                                ng-click="vm.siguienteGuardar()"
+                                style="width: 95%;">
+                                {{vm.nombreBoton}}
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+                <br>        
+            </div>
+        </div>
+        <div class="container">        
+            <!-- Modal -->
+            <div class="modal fade" id="modalDetalle" role="dialog">
+                <div class="modal-dialog">
+                
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Detalle de Venta</h4>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table" border="0" style="width: 100%;">
+                            <tr style="height: 30px;">
+                                <td style="text-align: right;width: 50%; background-color: lightgrey">
+                                    <label style="color: green;">
+                                        <strong>Folio de Venta:&nbsp;&nbsp;</strong> 
+                                    </label>
+                                </td>
+                                <td style="background-color: whitesmoke;">
+                                    <label style="color:blue;">
+                                        <strong>{{vm.modalFolio}}</strong> 
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr style="height: 30px;">
+                                <td style="text-align: right; background-color: lightgrey">
+                                    <label style="color: green;">
+                                        <strong>Clave de Cliente:&nbsp;&nbsp;</strong> 
+                                    </label>
+                                </td>
+                                <td style="background-color: whitesmoke;">
+                                    <label style="color:blue;">
+                                        <strong>{{vm.modalCliente}}</strong> 
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr style="height: 30px;">
+                                    <td style="text-align: right; background-color: lightgrey">
+                                        <label style="color: green;">
+                                            <strong>Nombre de Cliente:&nbsp;&nbsp;</strong> 
+                                        </label>
+                                    </td>
+                                    <td style="background-color: whitesmoke;">
+                                        <label style="color:blue;">
+                                            <strong>{{vm.modalNombre}}</strong> 
+                                        </label>
+                                    </td>
+                                </tr>
+                            <tr style="height: 30px;">
+                                <td style="text-align: right; background-color: lightgrey">
+                                    <label style="color: green;">
+                                        <strong>Importe Total:&nbsp;&nbsp;</strong> 
+                                    </label>
+                                </td>
+                                <td style="background-color: whitesmoke;">
+                                    <label style="color:blue;">
+                                        <strong>{{vm.modalTotal}}</strong> 
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr style="height: 30px;">
+                                <td style="text-align: right; background-color: lightgrey">
+                                    <label style="color: green;">
+                                        <strong>Fecha de Compra:&nbsp;&nbsp;</strong> 
+                                    </label>
+                                </td>
+                                <td style="background-color: whitesmoke;">
+                                    <label style="color:blue;">
+                                        <strong>{{vm.modalFecha}}</strong> 
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr style="height: 30px;">
+                                <td style="text-align: right; background-color: lightgrey">
+                                    <label style="color: green;">
+                                        <strong>Plazo para Pagar:&nbsp;&nbsp;</strong> 
+                                    </label>
+                                </td>
+                                <td style="background-color: whitesmoke;">
+                                    <label style="color:blue;">
+                                        <strong>{{vm.modalPlazo}} MESES</strong> 
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr style="height: 30px;">
+                                <td style="text-align: right; background-color: lightgrey">
+                                    <label style="color: green;">
+                                        <strong>Abono Mensual:&nbsp;&nbsp;</strong> 
+                                    </label>
+                                </td>
+                                <td style="background-color: whitesmoke;">
+                                    <label style="color:blue;">
+                                        <strong>$ {{vm.modalAbono}}</strong> 
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr style="height: 30px;">
+                                <td style="text-align: right; background-color: lightgrey">
+                                    <label style="color: green;">
+                                        <strong>Total Pagar:&nbsp;&nbsp;</strong> 
+                                    </label>
+                                </td>
+                                <td style="background-color: whitesmoke;">
+                                    <label style="color:blue;">
+                                        <strong>$ {{vm.modalTotalPagar}}</strong> 
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr style="height: 30px;">
+                                <td style="text-align: right; background-color: lightgrey">
+                                    <label style="color: green;">
+                                        <strong>Ahorro:&nbsp;&nbsp;</strong> 
+                                    </label>
+                                </td>
+                                <td style="background-color: whitesmoke;">
+                                    <label style="color:blue;">
+                                        <strong>$ {{vm.modalAhorro}}</strong> 
+                                    </label>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+        </div>
+    </section>
