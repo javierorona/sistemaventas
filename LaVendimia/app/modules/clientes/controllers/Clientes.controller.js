@@ -57,7 +57,7 @@
                         {
                             field: 'appaterno',
                             displayName: 'Apellido Paterno',
-                            width: '25%',
+                            width: '20%',
                             headerCellClass: 'text-center',
                             cellClass: 'text-center',
                             cellTemplate: '<div class="ui-grid-cell-contents center" '+
@@ -97,9 +97,55 @@
                                                     '</a> '+
                                                 '</div> '+
                                             '</div>'
+                        },
+                        {
+                            field: '0',
+                            displayName: ' ',
+                            width: '5%',
+                            headerCellClass: 'text-center',
+                            cellClass: 'text-center',
+                            cellTemplate: '<div class="ui-grid-cell-contents"> '+
+                                                '<div class="hidden-sm hidden-xs action-buttons"> '+
+                                                    '<a class="blue" ng-click="grid.appScope.vm.eliminarRenglon(row)"> '+
+                                                        '<i class="fa fa-remove" style="font-size:25px;color:red" title = "Eliminar Cliente"></i> '+
+                                                    '</a> '+
+                                                '</div> '+
+                                            '</div>'
                         }
                 ],
                 data: vm.clientes
+            };
+
+            vm.eliminarRenglon = function(row){
+                var idEliminar = parseInt(row.entity.clave);
+                var indice = vm.gridApi.grid.renderContainers.body.visibleRowCache.indexOf(row);
+
+                swal({
+                    title: "",
+                    text: "¿Está seguro de eliminar al cliente del catálogo?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-primary",
+                    confirmButtonText: "OK",
+                    cancelButtonText: "Cancelar",
+                    closeOnConfirm: true,
+                    closeOnCancel: true
+                  },
+                  function(isConfirm) {
+                    if (isConfirm) {
+                        serv.eliminarCliente(idEliminar).then(function(respuesta){
+                            if(respuesta.estatus != 1){
+                                swal("", respuesta.mensaje, "warning");
+                            }else{
+                                swal("", respuesta.mensaje, "success");
+                                vm.clientes.splice(indice, 1);
+                                vm.gridOptionsVenta.data = vm.clientes;
+                            }
+                        }, function(error){
+                            swal("", "Ocurrió un error al conectar con el servicio [eliminarRenglon]", "error");
+                        });
+                    }
+                  });
             };
 
             vm.consultarClientes = function(){

@@ -6,8 +6,5 @@
         "password": "zj7FKCuMF4",
         "port":"3306"
     },
-    "uriException": [],
-    "auth": "http://sso.coppel.com:50060/api/v1/verify",
-    "authDev": "http://devsso.coppel.com/api/v1/verify",
-    "soaAH": "http://pbatelefonicas.coppel.com:20622/soa/autentificaHuella/autentificaHuella?wsdl"
+    "uriException": []
 }

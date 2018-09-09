@@ -26,8 +26,6 @@ class Module implements IModule
         $collection->setPrefix('/api')
             ->setHandler('\Na\LavendimiaBack\Controllers\ApiController')
             ->setLazy(true);
-
-        $collection->get('/ejemplo', 'holaMundo');
         //GET
         $collection->get('/configuracion', 'obtenerConfiguracion');
 
@@ -54,6 +52,10 @@ class Module implements IModule
         $collection->put('/existencia/{articulo}/{cantidad}/{sumar}', 'actualizarExistencia');
 
         $collection->put('/venta', 'grabarVenta');
+        //DELETE
+        $collection->delete('/articulo/{id}', 'borrarArticulo');
+        $collection->delete('/cliente/{id}', 'borrarCliente');
+        $collection->delete('/venta/{folio}', 'borrarVenta');
 
         return [
             $collection

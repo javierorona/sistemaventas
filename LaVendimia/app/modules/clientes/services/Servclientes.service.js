@@ -51,11 +51,27 @@
                 );
             };
 
+            var eliminarCliente = function(id) {
+                return $http({
+                    method: 'DELETE',
+                    url: Config.api + '/cliente/'+id
+                    //data:parametros,
+                }).then(
+                    function(response) {
+                        return response.data.data.response;
+                    },
+                    function(response) {
+                        return $q.reject(response);
+                    }
+                );
+            };
+
             // Public API
             return {
                 consultarClientes: consultarClientes,
                 consultarIdCliente: consultarIdCliente,
-                guardarCliente: guardarCliente
+                guardarCliente: guardarCliente,
+                eliminarCliente: eliminarCliente
             };
         }
     ]);

@@ -105,7 +105,7 @@
                         {
                             field: 'fecha',
                             displayName: 'Fecha',
-                            width: '20%',
+                            width: '15%',
                             headerCellClass: 'text-center',
                             cellClass: 'text-center',
                             cellTemplate: '<div class="ui-grid-cell-contents center" '+
@@ -122,6 +122,20 @@
                                                 '<div class="hidden-sm hidden-xs action-buttons"> '+
                                                     '<a class="blue" ng-click="grid.appScope.vm.verDetalle(row)"> '+
                                                         '<i class="fa fa-list-alt" style="font-size:25px;color:green" title = "Ver Detalle"></i> '+
+                                                    '</a> '+
+                                                '</div> '+
+                                            '</div>'
+                        },
+                        {
+                            field: '0',
+                            displayName: ' ',
+                            width: '5%',
+                            headerCellClass: 'text-center',
+                            cellClass: 'text-center',
+                            cellTemplate: '<div class="ui-grid-cell-contents"> '+
+                                                '<div class="hidden-sm hidden-xs action-buttons"> '+
+                                                    '<a class="blue" ng-click="grid.appScope.vm.eliminarRenglonVenta(row)"> '+
+                                                        '<i class="fa fa-remove" style="font-size:25px;color:red" title = "Eliminar Venta"></i> '+
                                                     '</a> '+
                                                 '</div> '+
                                             '</div>'
@@ -226,6 +240,38 @@
                         }
                 ],
                 data: vm.registroVentas
+            };
+
+            vm.eliminarRenglonVenta = function(row){
+                var idEliminar = parseInt(row.entity.folio);
+                var indice = vm.gridApi.grid.renderContainers.body.visibleRowCache.indexOf(row);
+
+                swal({
+                    title: "",
+                    text: "¿Está seguro de eliminar la venta del registro del catálogo?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-primary",
+                    confirmButtonText: "OK",
+                    cancelButtonText: "Cancelar",
+                    closeOnConfirm: true,
+                    closeOnCancel: true
+                  },
+                  function(isConfirm) {
+                    if (isConfirm) {
+                        serv.eliminarVenta(idEliminar).then(function(respuesta){
+                            if(respuesta.estatus != 1){
+                                swal("", respuesta.mensaje, "warning");
+                            }else{
+                                swal("", respuesta.mensaje, "success");
+                                vm.ventas.splice(indice, 1);
+                                vm.gridOptionsVenta.data = vm.ventas;
+                            }
+                        }, function(error){
+                            swal("", "Ocurrió un error al conectar con el servicio [eliminarRenglon]", "error");
+                        });
+                    }
+                  });
             };
 
             vm.cambiaSelectCliente = function(){

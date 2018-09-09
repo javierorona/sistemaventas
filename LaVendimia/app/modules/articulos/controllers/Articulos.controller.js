@@ -52,7 +52,7 @@
                         {
                             field: 'descripcion',
                             displayName: 'Descripcion',
-                            width: '30%',
+                            width: '25%',
                             headerCellClass: 'text-center',
                             cellClass: 'text-center',
                             cellTemplate: '<div class="ui-grid-cell-contents center" '+
@@ -102,9 +102,53 @@
                                                     '</a> '+
                                                 '</div> '+
                                             '</div>'
+                        },
+                        {
+                            field: '0',
+                            displayName: ' ',
+                            width: '5%',
+                            headerCellClass: 'text-center',
+                            cellClass: 'text-center',
+                            cellTemplate: '<div class="ui-grid-cell-contents"> '+
+                                                '<div class="hidden-sm hidden-xs action-buttons"> '+
+                                                    '<a class="blue" ng-click="grid.appScope.vm.eliminarRenglon(row)"> '+
+                                                        '<i class="fa fa-remove" style="font-size:25px;color:red" title = "Eliminar Art&iacute;culo"></i> '+
+                                                    '</a> '+
+                                                '</div> '+
+                                            '</div>'
                         }
                 ],
                 data: vm.articulos
+            };
+
+            vm.eliminarRenglon = function(row){
+                var idEliminar = parseInt(row.entity.clave);
+                var indice = vm.gridApi.grid.renderContainers.body.visibleRowCache.indexOf(row);
+
+                swal({
+                    title: "",
+                    text: "¿Está seguro de eliminar el artículo del catálogo?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-primary",
+                    confirmButtonText: "OK",
+                    cancelButtonText: "Cancelar",
+                    closeOnConfirm: true,
+                    closeOnCancel: true
+                  },
+                  function(isConfirm) {
+                    if (isConfirm) {
+                        serv.eliminarArticulo(idEliminar).then(function(respuesta){
+                            if(respuesta.estatus != 1){
+                                swal("", respuesta.mensaje, "warning");
+                            }else{
+                                swal("", respuesta.mensaje, "success");
+                                vm.articulos.splice(indice, 1);
+                                vm.gridOptionsVenta.data = vm.articulos;
+                            }
+                        })
+                    }
+                  });
             };
 
             vm.consultarArticulos = function(){

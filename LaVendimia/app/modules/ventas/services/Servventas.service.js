@@ -136,6 +136,21 @@
                 );
             };
 
+            var eliminarVenta = function(folio) {
+                return $http({
+                    method: 'DELETE',
+                    url: Config.api + '/venta/'+folio
+                    //data:parametros,
+                }).then(
+                    function(response) {
+                        return response.data.data.response;
+                    },
+                    function(response) {
+                        return $q.reject(response);
+                    }
+                );
+            };
+
             // Public API
             return {
                 consultarVentas: consultarVentas,
@@ -145,7 +160,8 @@
                 actualizarExistencia: actualizarExistencia,
                 grabarVenta: grabarVenta,
                 obtenerDatosCliente: obtenerDatosCliente,
-                obtenerDatosArticulo: obtenerDatosArticulo
+                obtenerDatosArticulo: obtenerDatosArticulo,
+                eliminarVenta: eliminarVenta
             };
         }
     ]);

@@ -17,29 +17,6 @@ class ApiController extends RESTController
         $this->modelo = new Modelos\ApiModel();
     }
 
-    public function holaMundo()
-    {
-        $response = null;
-
-        try {
-            $response = $this->modelo->holaMundo();
-        } catch (\Exception $ex) {
-            $mensaje = $ex->getMessage();
-            $this->logger->error('['. __METHOD__ ."] Se lanzó la excepción > $mensaje");
-
-            throw new HTTPException(
-                'No fue posible completar su solicitud, intente de nuevo por favor.',
-                500, [
-                    'dev' => $mensaje,
-                    'internalCode' => 'SIE1000',
-                    'more' => 'Verificar conexión con la base de datos.'
-                ]
-            );
-        }
-
-        return $this->respond(['response' => $response]);
-    }
-
     public function obtenerConfiguracion()
     {
         $response = null;
@@ -526,6 +503,105 @@ class ApiController extends RESTController
             }else{
                 $status = 1;
                 $mensaje = "";
+            }
+        } catch (\Exception $ex) {
+            $mensaje = $ex->getMessage();
+            $this->logger->error('['. __METHOD__ ."] Se lanzó la excepción > $mensaje");
+
+            throw new HTTPException(
+                'No fue posible completar su solicitud, intente de nuevo por favor.',
+                500, [
+                    'dev' => $mensaje,
+                    'internalCode' => 'SIE1000',
+                    'more' => 'Verificar conexión con la base de datos.'
+                ]
+            );
+        }
+        $resultSet->estatus = $status;
+        $resultSet->mensaje = $mensaje;
+        $resultSet->data = $response;
+
+        return $this->respond(['response' => $resultSet]);
+    }
+
+    public function borrarArticulo($id)
+    {
+        $response = null;
+        $resultSet = new \stdClass();
+        try {
+            $response = $this->modelo->borrarArticulo($id);
+            if($response != 1){
+                $status = -1;
+                $mensaje = "No se ha podido realizar esta operación, favor de verificar";
+            }else{
+                $status = 1;
+                $mensaje = "El artículo ha sido correctamente";
+            }
+        } catch (\Exception $ex) {
+            $mensaje = $ex->getMessage();
+            $this->logger->error('['. __METHOD__ ."] Se lanzó la excepción > $mensaje");
+
+            throw new HTTPException(
+                'No fue posible completar su solicitud, intente de nuevo por favor.',
+                500, [
+                    'dev' => $mensaje,
+                    'internalCode' => 'SIE1000',
+                    'more' => 'Verificar conexión con la base de datos.'
+                ]
+            );
+        }
+        $resultSet->estatus = $status;
+        $resultSet->mensaje = $mensaje;
+        $resultSet->data = $response;
+
+        return $this->respond(['response' => $resultSet]);
+    }
+
+    public function borrarCliente($id)
+    {
+        $response = null;
+        $resultSet = new \stdClass();
+        try {
+            $response = $this->modelo->borrarCliente($id);
+            if($response != 1){
+                $status = -1;
+                $mensaje = "No se ha podido realizar esta operación, favor de verificar";
+            }else{
+                $status = 1;
+                $mensaje = "El cliente ha sido borrado correctamente";
+            }
+        } catch (\Exception $ex) {
+            $mensaje = $ex->getMessage();
+            $this->logger->error('['. __METHOD__ ."] Se lanzó la excepción > $mensaje");
+
+            throw new HTTPException(
+                'No fue posible completar su solicitud, intente de nuevo por favor.',
+                500, [
+                    'dev' => $mensaje,
+                    'internalCode' => 'SIE1000',
+                    'more' => 'Verificar conexión con la base de datos.'
+                ]
+            );
+        }
+        $resultSet->estatus = $status;
+        $resultSet->mensaje = $mensaje;
+        $resultSet->data = $response;
+
+        return $this->respond(['response' => $resultSet]);
+    }
+
+    public function borrarVenta($folio)
+    {
+        $response = null;
+        $resultSet = new \stdClass();
+        try {
+            $response = $this->modelo->borrarVenta($folio);
+            if($response != 1){
+                $status = -1;
+                $mensaje = "No se ha podido realizar esta operación, favor de verificar";
+            }else{
+                $status = 1;
+                $mensaje = "La venta ha sido borrada correctamente";
             }
         } catch (\Exception $ex) {
             $mensaje = $ex->getMessage();

@@ -54,11 +54,27 @@
                 );
             };
 
+            var eliminarArticulo = function(id) {
+                return $http({
+                    method: 'DELETE',
+                    url: Config.api + '/articulo/'+id
+                    //data:parametros,
+                }).then(
+                    function(response) {
+                        return response.data.data.response;
+                    },
+                    function(response) {
+                        return $q.reject(response);
+                    }
+                );
+            };
+
             // Public API
             return {
                 consultarArticulos: consultarArticulos,
                 obtenerSiguiente: obtenerSiguiente,
-                guardarArticulo: guardarArticulo
+                guardarArticulo: guardarArticulo,
+                eliminarArticulo: eliminarArticulo
             };
         }
     ]);

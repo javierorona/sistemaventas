@@ -6,21 +6,6 @@ use Phalcon\Mvc\Model as Modelo;
 
 class ApiModel extends Modelo
 {
-    public function holaMundo()
-    {
-        $di = \Phalcon\DI::getDefault();
-        $response = null;
-
-        $db = $di->get('conexion');
-
-        $statement = $db->prepare("SELECT 'hola mundo!' AS saludo, NOW() AS fecha;");
-        $statement->execute();
-
-        $response = $statement->fetch();
-
-        return $response;
-    }
-
     public function obtenerConfiguracion()
     {
         $di = \Phalcon\DI::getDefault();
@@ -377,6 +362,51 @@ class ApiModel extends Modelo
             VALUES($claveCliente, '$nombre', $totalAdeudo, $plazo, $abono, $totalPagar, $ahorrro);");
         $statement->execute();
         
+        $response = 1;
+
+        return $response;
+    }
+
+    public function borrarArticulo($id)
+    {
+        $di = \Phalcon\DI::getDefault();
+        $response = null;
+
+        $db = $di->get('conexion');
+
+        $statement = $db->prepare("DELETE FROM cat_articulos WHERE id = $id;");
+        $statement->execute();
+
+        $response = 1;
+
+        return $response;
+    }
+
+    public function borrarCliente($id)
+    {
+        $di = \Phalcon\DI::getDefault();
+        $response = null;
+
+        $db = $di->get('conexion');
+
+        $statement = $db->prepare("DELETE FROM cat_clientes WHERE id = $id;");
+        $statement->execute();
+
+        $response = 1;
+
+        return $response;
+    }
+
+    public function borrarVenta($folio)
+    {
+        $di = \Phalcon\DI::getDefault();
+        $response = null;
+
+        $db = $di->get('conexion');
+
+        $statement = $db->prepare("DELETE FROM cat_ventas WHERE folio = $folio;");
+        $statement->execute();
+
         $response = 1;
 
         return $response;
