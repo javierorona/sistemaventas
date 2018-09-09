@@ -289,7 +289,7 @@
             };
 
             vm.agregarArticulo = function(){
-                if(vm.articuloSelecto.length > 0)
+                if(vm.articuloSelecto.length > 0 && vm.deshabilitaArticulo == false)
                 {
                     blockUI.start("Cargando...");
                     for (var index = 0; index < vm.articuloSelecto.length; index++) {
@@ -416,6 +416,8 @@
 
             vm.nuevaVenta = function(){
                 vm.seccionNuevo = true;
+                vm.deshabilCliente = false;
+                vm.deshabilitaArticulo = true;
                 vm.consultarFolio();
                 vm.obtenerConfirugacion();
                 vm.obtenerDatosCliente();
@@ -426,40 +428,20 @@
                 var unidadesAnt = null;
                 var unidadesRestar = null;
                 var unidadesSumar = null;
-                var importe = 0;
                 vm.verTabla = false;
                 vm.nombreBoton = "Siguiente";
                 vm.tablaAbonos = [];
-                
                 if(parseInt(row.entity.cantidad) > parseInt(row.entity.existencia)){
                     swal("", "No puede capturar mas unidades de las que hay en existencia ("+row.entity.existencia+")", "warning");
                     row.entity.cantidad = row.entity.unidadesAnterior;
                     vm.siguiente = false;
-                }else if (row.entity.cantidad != 0){
+                }else if (parseInt(row.entity.cantidad) != 0){
                     vm.unidades = parseInt(row.entity.cantidad);
                     vm.unidadesAnt =parseInt(row.entity.unidadesAnterior);
 
                     row.entity.importe = (row.entity.cantidad * row.entity.precio).toFixed(2);
-
-                    var datosGrid = vm.gridApiVenta.core.getVisibleRows(vm.gridApiVenta.grid);
                     
-                    for (var index = 0; index < datosGrid.length; index++) {                           
-                        importe = importe + parseFloat(datosGrid[index].entity.importe);  
-                    }
-                    
-                    vm.enganche = (vm.configuracion.porcentaje/100) * importe;
-
-                    vm.bonifEnganche = vm.enganche * ((vm.configuracion.tasa * vm.configuracion.plazo)/ 100);
-
-                    vm.totalPagar = importe - vm.enganche - vm.bonifEnganche;
-                    vm.totalAdeudo = vm.totalPagar.toFixed(2);
-
-
-                    vm.bonifEnganche = vm.bonifEnganche.toLocaleString('us', {minimumFractionDigits: 2,maximumFractionDigits: 2});
-
-                    vm.enganche = vm.enganche.toLocaleString('us', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-
-                    vm.totalPagar = vm.totalPagar.toLocaleString('us', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    vm.calcularTotales();
 
                     if(vm.unidades > unidadesAnt){
                         unidadesRestar = vm.unidades - vm.unidadesAnt;
@@ -481,6 +463,27 @@
                 }
             };
 
+            vm.calcularTotales = function(){
+                var importe = 0;
+                var datosGrid = vm.gridApiVenta.core.getVisibleRows(vm.gridApiVenta.grid);
+                    
+                for (var index = 0; index < datosGrid.length; index++) {
+                    importe = importe + parseFloat(datosGrid[index].entity.importe);  
+                }
+                vm.enganche = (vm.configuracion.porcentaje/100) * importe;
+
+                vm.bonifEnganche = vm.enganche * ((vm.configuracion.tasa * vm.configuracion.plazo)/ 100);
+
+                vm.totalPagar = importe - vm.enganche - vm.bonifEnganche;
+                vm.totalAdeudo = vm.totalPagar.toFixed(2);
+
+                vm.bonifEnganche = vm.bonifEnganche.toLocaleString('us', {minimumFractionDigits: 2,maximumFractionDigits: 2});
+
+                vm.enganche = vm.enganche.toLocaleString('us', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+                vm.totalPagar = vm.totalPagar.toLocaleString('us', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            };
+
             vm.validarExistencia = function(articulo){
                 serv.validarExistencia(articulo).then(function(respuesta){
                     if(respuesta.estatus != 1){
@@ -500,16 +503,13 @@
 
             vm.eliminarRenglon = function(row){
                 var indice = vm.gridApiVenta.grid.renderContainers.body.visibleRowCache.indexOf(row);
-
-                vm.actualizarExistencia(row.entity.id, row.entity.unidadesAnterior, 1);//suma la existencia
+                var datosGrid = vm.gridApiVenta.core.getVisibleRows(vm.gridApiVenta.grid);
+                var importe = 0;
 
                 vm.registroVentas.splice(indice, 1);
                 vm.gridOptionsVenta.data = vm.registroVentas;
 
-                vm.enganche = "";
-                vm.bonifEnganche = "";
-                vm.totalPagar = "";
-                
+                vm.actualizarExistencia(row.entity.id, row.entity.unidadesAnterior, 1);
             };
 
             vm.siguienteGuardar = function(){
@@ -571,7 +571,7 @@
                     if(respuesta.estatus != 1){
                         swal("", respuesta.mensaje, "warning");
                     }else{
-                        
+                        vm.calcularTotales();
                     }
                 }, function(error){
                     swal("", "Ocurrió un error al conectar con el servicio [actualizarExistencia]")
