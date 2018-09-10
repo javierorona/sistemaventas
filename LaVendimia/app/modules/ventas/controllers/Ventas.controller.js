@@ -19,9 +19,9 @@
             vm.configuracion = [];
             vm.registroVentas = [];            
 
-            vm.enganche = 0;
-            vm.bonifEnganche = 0;
-            vm.totalPagar = 0;
+            vm.enganche = 0.00;
+            vm.bonifEnganche = 0.00;
+            vm.totalPagar = 0.00;
             vm.nombreBoton = "Siguiente";
             vm.totalAdeudo = 0;
             vm.precioContado = 0;
@@ -38,7 +38,6 @@
             vm.rfcCliente = null;
             
             vm.verRFC = false;
-            vm.siguiente =  false;
             vm.verTabla = false;
             vm.seccionNuevo = false;
             vm.guardar = false;
@@ -258,16 +257,20 @@
                     closeOnCancel: true
                   },
                   function(isConfirm) {
+                    blockUI.start("Cargando...");                      
                     if (isConfirm) {
                         serv.eliminarVenta(idEliminar).then(function(respuesta){
                             if(respuesta.estatus != 1){
                                 swal("", respuesta.mensaje, "warning");
+                                blockUI.stop();
                             }else{
                                 swal("", respuesta.mensaje, "success");
                                 vm.ventas.splice(indice, 1);
                                 vm.gridOptionsVenta.data = vm.ventas;
+                                blockUI.stop();
                             }
                         }, function(error){
+                            blockUI.stop();
                             swal("", "Ocurrió un error al conectar con el servicio [eliminarRenglon]", "error");
                         });
                     }
@@ -425,24 +428,39 @@
             };
 
             vm.calcularImporte = function(row){
+                var datosGrid = vm.gridApiVenta.core.getVisibleRows(vm.gridApiVenta.grid);
                 var unidadesAnt = null;
                 var unidadesRestar = null;
                 var unidadesSumar = null;
                 vm.verTabla = false;
+                vm.guardar = false;
                 vm.nombreBoton = "Siguiente";
                 vm.tablaAbonos = [];
+
                 if(parseInt(row.entity.cantidad) > parseInt(row.entity.existencia)){
-                    swal("", "No puede capturar mas unidades de las que hay en existencia ("+row.entity.existencia+")", "warning");
-                    row.entity.cantidad = row.entity.unidadesAnterior;
-                    vm.siguiente = false;
-                }else if (parseInt(row.entity.cantidad) != 0){
+                    row.entity.cantidad = "";
+                    row.entity.importe = 0.00;
+                    swal({
+                        title: "",
+                        text: "No puede capturar mas unidades de las que hay en existencia ("+row.entity.existencia+")",
+                        type: "warning",
+                        showCancelButton: false,
+                        confirmButtonClass: "btn-primary",
+                        confirmButtonText: "OK",
+                        closeOnConfirm: true
+                      },
+                      function(isConfirm) {
+                        if (isConfirm) {
+                            vm.actualizarExistencia(row.entity.id, row.entity.unidadesAnterior, 1);
+                            row.entity.unidadesAnterior = 0;
+                        }
+                      });
+                }else if (parseInt(row.entity.cantidad) != 0 && row.entity.cantidad.length > 0){
                     vm.unidades = parseInt(row.entity.cantidad);
                     vm.unidadesAnt =parseInt(row.entity.unidadesAnterior);
 
                     row.entity.importe = (row.entity.cantidad * row.entity.precio).toFixed(2);
                     
-                    vm.calcularTotales();
-
                     if(vm.unidades > unidadesAnt){
                         unidadesRestar = vm.unidades - vm.unidadesAnt;
                         vm.actualizarExistencia(row.entity.id, unidadesRestar, 0);
@@ -452,13 +470,15 @@
                         vm.actualizarExistencia(row.entity.id, unidadesSumar, 1);
                         row.entity.unidadesAnterior = vm.unidades;
                     }
-                    
-                    vm.siguiente = true;
+                }else if(datosGrid.length > 1){
+                    row.entity.importe = 0.00
+                    vm.calcularTotales();
+                    vm.actualizarExistencia(row.entity.id, row.entity.unidadesAnterior, 1);
+                    row.entity.unidadesAnterior = 0;
                 }else{
-                    vm.siguiente = false;
-                    vm.enganche = "";
-                    vm.bonifEnganche = "";
-                    vm.totalPagar = "";
+                    vm.enganche = 0.00;
+                    vm.bonifEnganche = 0.00;
+                    vm.totalPagar = 0.00;
                     row.entity.importe = 0.00
                 }
             };
@@ -466,14 +486,15 @@
             vm.calcularTotales = function(){
                 var importe = 0;
                 var datosGrid = vm.gridApiVenta.core.getVisibleRows(vm.gridApiVenta.grid);
-                    
+                
                 for (var index = 0; index < datosGrid.length; index++) {
                     importe = importe + parseFloat(datosGrid[index].entity.importe);  
                 }
+                
                 vm.enganche = (vm.configuracion.porcentaje/100) * importe;
-
+                
                 vm.bonifEnganche = vm.enganche * ((vm.configuracion.tasa * vm.configuracion.plazo)/ 100);
-
+                
                 vm.totalPagar = importe - vm.enganche - vm.bonifEnganche;
                 vm.totalAdeudo = vm.totalPagar.toFixed(2);
 
@@ -503,18 +524,24 @@
 
             vm.eliminarRenglon = function(row){
                 var indice = vm.gridApiVenta.grid.renderContainers.body.visibleRowCache.indexOf(row);
-                var datosGrid = vm.gridApiVenta.core.getVisibleRows(vm.gridApiVenta.grid);
-                var importe = 0;
-
                 vm.registroVentas.splice(indice, 1);
                 vm.gridOptionsVenta.data = vm.registroVentas;
-
                 vm.actualizarExistencia(row.entity.id, row.entity.unidadesAnterior, 1);
+                vm.calcularTotales();
             };
 
             vm.siguienteGuardar = function(){
+                var datosGrid = vm.gridApiVenta.core.getVisibleRows(vm.gridApiVenta.grid);
+                var cantidadRen = null;
+                var continua = true;
                 if(vm.nombreBoton == "Siguiente"){
-                    if(!vm.siguiente){
+                    for (var index = 0; index < datosGrid.length; index++) {
+                        cantidadRen = datosGrid[index].entity.cantidad;
+                        if(parseInt(cantidadRen) == 0 || cantidadRen.length == 0){
+                            continua = false;
+                        }
+                    }
+                    if(!continua){
                         swal("", "Los datos ingresados no son correctos, favor de verificar", "warning");
                     }else{
                         vm.formarObjetoTabla();
@@ -540,7 +567,6 @@
                                 blockUI.stop();
                                 swal("", respuesta.mensaje, "warning");
                             }else{
-                                vm.registroVentas = [];
                                 swal({
                                     title: "",
                                     text: "Bien hecho, Tu venta ha sido registrada correctamente",
@@ -552,7 +578,7 @@
                                   },
                                   function(isConfirm) {
                                     if (isConfirm) {
-                                        vm.cancelar();
+                                        vm.inicializar();
                                     }
                                   });
                                 blockUI.stop();
@@ -567,13 +593,17 @@
             };
 
             vm.actualizarExistencia = function(articulo, unidades, sumar){
+                blockUI.start("Cargando...");
                 serv.actualizarExistencia(articulo, unidades, sumar).then(function(respuesta){
                     if(respuesta.estatus != 1){
                         swal("", respuesta.mensaje, "warning");
+                        blockUI.stop();
                     }else{
                         vm.calcularTotales();
+                        blockUI.stop();
                     }
                 }, function(error){
+                    blockUI.stop();
                     swal("", "Ocurrió un error al conectar con el servicio [actualizarExistencia]")
                 });
             };
@@ -607,19 +637,49 @@
             };
 
             vm.cancelar = function(){
+                var datosGrid = vm.gridApiVenta.core.getVisibleRows(vm.gridApiVenta.grid);
+                var unidadesAnte = 0;
+
                 vm.nombreBoton = "Siguiente";
                 vm.verTabla = false;
-                vm.siguiente = false;
-                vm.registroVentas = [];
-                vm.gridOptionsVenta.data = vm.registroVentas;
-                vm.consultarVentas();
+                
                 vm.seccionNuevo = false;
-                vm.enganche = 0;
-                vm.bonifEnganche = 0;
-                vm.totalPagar = 0;
                 vm.verRFC = false;
                 vm.clienteSelecto = null;
                 vm.articuloSelecto = null;
+
+                if(datosGrid.length > 0){
+                    for (var index = 0; index < datosGrid.length; index++) {
+                        unidadesAnte =parseInt(datosGrid[index].entity.unidadesAnterior);
+                        if(datosGrid[index].entity.unidadesAnterior > 0){
+                            vm.actualizarExistencia(datosGrid[index].entity.id, unidadesAnte, 1);
+                        }
+                        
+                        if(index == datosGrid.length -1){
+                            vm.registroVentas = [];
+                            vm.gridOptionsVenta.data = vm.registroVentas;
+                            vm.consultarVentas();
+                        }
+                    }
+                }
+                vm.bonifEnganche = 0.00;
+                vm.enganche = 0.00;
+                vm.totalPagar = 0.00;
+            };
+
+            vm.inicializar = function(){
+                vm.nombreBoton = "Siguiente";
+                vm.verTabla = false;                
+                vm.seccionNuevo = false;
+                vm.verRFC = false;
+                vm.clienteSelecto = null;
+                vm.articuloSelecto = null;
+                vm.bonifEnganche = 0.00;
+                vm.enganche = 0.00;
+                vm.totalPagar = 0.00;
+                vm.registroVentas = [];
+                vm.gridOptionsVenta.data = vm.registroVentas;
+                vm.consultarVentas();
             };
         }
     ]);

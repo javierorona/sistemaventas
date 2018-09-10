@@ -1,7 +1,7 @@
 (function() {
     'use strict';
     angular.module('constantConfig', []).constant('Config', {
-        api: 'http://localhost:80/LAVENDIMIA-BACK/api',
+        api: 'http://localhost:8080/LAVENDIMIA-BACK/api',
         enviroment: 'Desarrollo',
         hojaAzul: 'http://10.44.15.147/hojaazul/fotos/',
         redirect: 'http://intranet.cln/intranet',
